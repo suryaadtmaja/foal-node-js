@@ -1,25 +1,43 @@
 // 3p
 // import { Group, Permission } from '@foal/typeorm';
-// import { isCommon } from '@foal/password';
-import { createConnection, getConnection, getManager } from 'typeorm';
+import { isCommon } from "@foal/password";
+import { createConnection, getConnection, getManager } from "typeorm";
 
 // App
-import { User } from '../app/entities';
+import { User } from "../app/entities";
 
 export const schema = {
   additionalProperties: false,
   properties: {
-    // email: { type: 'string', format: 'email' },
+    email: { type: "string", format: "email" },
     // groups: { type: 'array', items: { type: 'string' }, uniqueItems: true, default: [] },
-    // password: { type: 'string' },
+    password: { type: "string" },
     // userPermissions: { type: 'array', items: { type: 'string' }, uniqueItems: true, default: [] },
   },
-  required: [ /* 'email', 'password' */ ],
-  type: 'object',
+  required: ["email", "password"],
+  type: "object",
 };
 
-export async function main(/*args*/) {
-  const user = new User();
+export async function main(args: { email: string; password: string }) {
+  const connection = await createConnection();
+
+  try {
+    const user = new User();
+    user.email = args.email;
+
+    if (await isCommon(args.password)) {
+      console.log("Password is too common");
+      return;
+    }
+
+    await user.setPassword(args.password);
+    console.log(await user.save());
+  } catch (error) {
+    console.log(error.message);
+  } finally {
+    await connection.close();
+  }
+  // const user = new User();
   // user.userPermissions = [];
   // user.groups = [];
   // user.email = args.email;
@@ -29,7 +47,7 @@ export async function main(/*args*/) {
   // }
   // await user.setPassword(args.password);
 
-  await createConnection();
+  // await createConnection();
 
   // for (const codeName of args.userPermissions as string[]) {
   //   const permission = await Permission.findOne({ codeName });
@@ -49,13 +67,11 @@ export async function main(/*args*/) {
   //   user.groups.push(group);
   // }
 
-  try {
-    console.log(
-      await getManager().save(user)
-    );
-  } catch (error) {
-    console.log(error.message);
-  } finally {
-    await getConnection().close();
-  }
+  // try {
+  //   console.log(await getManager().save(user));
+  // } catch (error) {
+  //   console.log(error.message);
+  // } finally {
+  //   await getConnection().close();
+  // }
 }
