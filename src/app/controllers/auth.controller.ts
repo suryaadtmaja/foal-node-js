@@ -11,7 +11,7 @@ import { getSecretOrPrivateKey } from "@foal/jwt";
 import { sign } from "jsonwebtoken";
 import { User } from "../entities";
 
-export class LoginController {
+export class AuthController {
   @Post("/login")
   @ValidateBody({
     additionalProperties: false,
@@ -35,6 +35,7 @@ export class LoginController {
 
     const token = sign(
       {
+        id: user.id,
         email: user.email,
       },
       getSecretOrPrivateKey(),
