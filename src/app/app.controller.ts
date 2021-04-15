@@ -6,6 +6,7 @@ import {
   AuthController,
   BookingController,
   RoomController,
+  SignupController,
 } from "./controllers";
 
 export class AppController implements IAppController {
@@ -14,6 +15,7 @@ export class AppController implements IAppController {
     controller("/api", BookingController),
     controller("/api", RoomController),
     controller("/auth", AuthController),
+    controller("/auth", SignupController),
   ];
 
   async init() {
