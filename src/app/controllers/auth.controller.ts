@@ -23,7 +23,10 @@ export class AuthController {
     type: "object",
   })
   async login(ctx: Context) {
-    const user = await User.findOne({ email: ctx.request.body.email });
+    const user = await User.createQueryBuilder("user")
+      .addSelect("user.password")
+      .where("user.email = :email", { email: ctx.request.body.email })
+      .getOne();
 
     if (!user) {
       return new HttpResponseUnauthorized();

@@ -12,6 +12,9 @@ export class User extends BaseEntity {
   @Column({ select: false })
   password: string;
 
+  @Column({ nullable: true })
+  fullname: string;
+
   async setPassword(password: string) {
     this.password = await hashPassword(password);
   }
